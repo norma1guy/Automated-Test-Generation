@@ -2,8 +2,7 @@ import ast
 from pool import Pool
 import os
 import instrumentor
-from pprint import pprint
-from metadata import TestCases,File
+from metadata import TestCases
 
 class Functions(ast.NodeVisitor):
 
@@ -26,11 +25,11 @@ class Functions(ast.NodeVisitor):
         self.generic_visit(node)
 
 
-def test_class_gen(func_name, funcs, testcases):
+def test_class_gen(file_name, funcs, testcases):
     
     test_imp = ast.ImportFrom(module='unittest', names=[ast.alias(name='TestCase')], level=0)
-    func_imp = ast.ImportFrom(module=f'benchmark.{func_name}', names=[ast.alias(name='*')], level=0)
-
+    func_imp = ast.Import(names = [ast.alias(name = f'benchmark.{file_name}')])
+    print(file_name)
     test_class = ast.ClassDef(
         name='Test_example',
         bases=[ast.Name(id='TestCase', ctx=ast.Load())],
@@ -69,7 +68,7 @@ def test_class_gen(func_name, funcs, testcases):
             )
 
             func_call = ast.Call(
-                func=ast.Name(id=func_name, ctx=ast.Load()),
+                func=ast.Name(id='benchmark.' + file_name + '.' + func_name, ctx=ast.Load()),
                 args=arg_nodes,
                 keywords=[]
             )
@@ -125,7 +124,6 @@ def fuzzer_test_exec(path,iter):
                 iterations += 1
                 pool = test_gen.fuzzer_test_gen(10)
                 total += len(pool)
-                #print(pool)
                 output = None
                 for entry in pool :
                     try :
@@ -134,9 +132,7 @@ def fuzzer_test_exec(path,iter):
                             for i in range(len(entry)) :
                                 input = input + str(entry[i]) + ', ' if i <= len(entry) - 2 else input + str(entry[i]) 
                             output = globals()[func](*entry)
-                            #print(output)
                             if type(output) == str :
-                                #print(output)
                                 output.replace('\\','\\\\').replace('"','\\"').replace("'","\\'")
                         else :
                             output = globals()[func](entry)
@@ -162,10 +158,6 @@ def fuzzer_test_exec(path,iter):
     with open(f'test/fuzzer_{iter}/__init__.py','w') as file :
         file.write('')    
         
-
-            
-
-
 
 
 

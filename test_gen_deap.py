@@ -1,5 +1,5 @@
 from deap import base,creator,tools,algorithms
-from metadata import File,TestCases
+from metadata import TestCases
 from pool import Pool
 import os
 from test_gen_random import Functions,test_class_gen
