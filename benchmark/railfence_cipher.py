@@ -70,4 +70,3 @@ def raildecrypt(st: str, k: int) -> str:
             else:    
                 c -= 1
     return ''.join(result)
-

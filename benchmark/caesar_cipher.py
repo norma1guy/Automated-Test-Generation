@@ -21,5 +21,3 @@ def decrypt(strng: str, key: int) -> str:
             indx = indx + 95
         decrypted = decrypted + chr(indx)
     return decrypted
-
-
